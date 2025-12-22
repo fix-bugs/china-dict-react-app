@@ -9,7 +9,12 @@ import IdiomCard from './components/IdiomCard';
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ModuleType>('jielong');
   const [isDbReady, setIsDbReady] = useState(false);
-  const [loadingModules, setLoadingModules] = useState<Record<string, boolean>>({});
+  // const [loadingModules, setLoadingModules] = useState<Record<string, boolean>>({});
+  const [loadingModules, setLoadingModules] = useState<Record<string, boolean>>({
+    word: false,
+    ci: false,
+    xiehouyu: false
+  });
   
   // 更新状态
   const [updateStatus, setUpdateStatus] = useState<'idle' | 'updating' | 'success' | 'error'>('idle');
@@ -57,7 +62,7 @@ const App: React.FC = () => {
     const timer = setTimeout(async () => {
       const lastWord = chain.length > 0 ? chain[chain.length - 1].idiom.word : undefined;
       const lastChar = lastWord ? Array.from(lastWord).pop() : undefined;
-      const results = await idiomService.getSuggestions(inputValue, lastChar);
+      const results = await idiomService.getSuggestions(inputValue, '');
       setSuggestions(results);
     }, 200);
 
@@ -65,13 +70,25 @@ const App: React.FC = () => {
   }, [inputValue, chain, activeTab]);
 
   const loadModule = async (type: 'word' | 'ci' | 'xiehouyu') => {
-    if (loadingModules[type] === false) return;
+    // if (loadingModules[type] === false) return;
+    // setLoadingModules(prev => ({ ...prev, [type]: true }));
+    // try {
+    //   await dataService.initModule(type);
+    //   setLoadingModules(prev => ({ ...prev, [type]: false }));
+    // } catch (e) {
+    //   setLoadingModules(prev => ({ ...prev, [type]: false }));
+    // }
+     // 更准确的判断条件
+    if (loadingModules[type]) return; // 如果已经在加载则返回
+    
     setLoadingModules(prev => ({ ...prev, [type]: true }));
     try {
       await dataService.initModule(type);
       setLoadingModules(prev => ({ ...prev, [type]: false }));
     } catch (e) {
       setLoadingModules(prev => ({ ...prev, [type]: false }));
+      // 可以添加错误提示
+      console.error(`Failed to load ${type} module:`, e);
     }
   };
 
@@ -80,6 +97,19 @@ const App: React.FC = () => {
       if (!searchQuery) {
         setDictResults([]); setCiResults([]); setXieResults([]); setIdiomResults([]);
         return;
+      }
+      // 确保模块已加载
+      if (activeTab === 'dictionary') {
+        await loadModule('word');
+        setDictResults(dataService.searchWord(searchQuery));
+      }
+      if (activeTab === 'ci') {
+        await loadModule('ci');
+        setCiResults(dataService.searchCi(searchQuery));
+      }
+      if (activeTab === 'xiehouyu') {
+        await loadModule('xiehouyu');
+        setXieResults(dataService.searchXiehouyu(searchQuery));
       }
       if (activeTab === 'dictionary') setDictResults(dataService.searchWord(searchQuery));
       if (activeTab === 'ci') setCiResults(dataService.searchCi(searchQuery));
@@ -133,7 +163,7 @@ const App: React.FC = () => {
   const renderModuleContent = () => {
     if (activeTab === 'jielong') {
       return (
-        <div className="flex flex-col h-full bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')]">
+        <div className="flex flex-col h-full bg-[url('handmade-paper.png')]">
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 hide-scrollbar">
             {chain.length === 0 ? (
               <div className="min-h-full flex flex-col items-center justify-center text-center p-6 animate-slide-up">
@@ -186,11 +216,11 @@ const App: React.FC = () => {
           <div className="max-w-xl mx-auto w-full space-y-8 animate-slide-up">
             <div className="flex flex-col items-center text-center">
                <div className="w-24 h-24 bg-white rounded-[40px] shadow-2xl flex items-center justify-center text-5xl mb-4 border-4 border-red-50">👴</div>
-               <h2 className="text-2xl font-bold text-red-900 chinese-serif">智慧夫子</h2>
-               <p className="text-gray-400 text-sm mt-1">学海无涯，数据常新</p>
+               <h2 className="text-2xl font-bold text-red-900 chinese-serif">国学智慧</h2>
+               <p className="text-gray-400 text-sm mt-1">学海无涯，日日精进</p>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-red-50">
+            {/* <div className="bg-white rounded-3xl p-6 shadow-sm border border-red-50">
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                 <span className="w-1 h-4 bg-red-500 rounded-full"></span>数据管理中心
               </h3>
@@ -220,7 +250,7 @@ const App: React.FC = () => {
                   <div className="p-4 bg-green-50 text-green-600 rounded-2xl text-xs font-bold text-center">✅ 同步成功！所有数据已保存至本地。</div>
                 )}
               </div>
-            </div>
+            </div> */}
 
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-red-50">
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -229,7 +259,7 @@ const App: React.FC = () => {
               <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
                 <div className="flex justify-between border-b border-gray-50 pb-2">
                   <span className="text-gray-400">当前版本</span>
-                  <span className="font-mono font-bold">v1.2.0</span>
+                  <span className="font-mono font-bold">v1.1.0</span>
                 </div>
                 <p>
                   《国学智慧》是一款专为儿童设计的中国传统文化学习工具。我们通过趣味性的成语接龙和全方位的辞海查询，旨在激发孩子们对汉字的兴趣。

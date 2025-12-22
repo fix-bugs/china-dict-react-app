@@ -1,9 +1,12 @@
 
 import { Idiom, JielongResponse } from "../types";
-import { cacheService } from "./cacheService";
+// import { cacheService } from "./cacheService";
 
-const DB_URL = "https://raw.githubusercontent.com/by-syk/chinese-idiom-db/master/chinese-idioms-12976.db";
-const WASM_URL = "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.wasm";
+// const DB_URL = "https://raw.githubusercontent.com/by-syk/chinese-idiom-db/master/chinese-idioms-12976.db";
+// const WASM_URL = "./sql-wasm.wasm";
+
+const  dbFileUrl = "../data/chinese-idioms-12976.db";
+const  sqlWasmUrl = "../data/sql-wasm.wasm";
 
 let db: any = null;
 
@@ -13,16 +16,17 @@ export const idiomService = {
     
     // @ts-ignore
     const initSqlJs = window.initSqlJs;
-    const SQL = await initSqlJs({ locateFile: () => WASM_URL });
+    const SQL = await initSqlJs({ locateFile: () => sqlWasmUrl });
 
-    let buffer: ArrayBuffer | null = forceRefresh ? null : await cacheService.getItem('idiom_db_buffer');
+    // let buffer: ArrayBuffer | null = forceRefresh ? null : await cacheService.getItem('idiom_db_buffer');
+    let buffer: ArrayBuffer | null;
 
-    if (!buffer) {
-      const res = await fetch(DB_URL);
+    // if (!buffer) {
+      const res = await fetch(dbFileUrl);
       if (!res.ok) throw new Error("数据库下载失败");
       buffer = await res.arrayBuffer();
-      await cacheService.setItem('idiom_db_buffer', buffer);
-    }
+      // await cacheService.setItem('idiom_db_buffer', buffer);
+    // }
 
     db = new SQL.Database(new Uint8Array(buffer as ArrayBuffer));
   },
