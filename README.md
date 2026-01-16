@@ -1,20 +1,22 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 中华字典：汉字、词语、成语、歇后语查询，成语接龙
 
-# Run and deploy your AI Studio app
+## 开发语言
 
-This contains everything you need to run your app locally.
+React + TypeScript
 
-View your app in AI Studio: https://ai.studio/apps/drive/1URjRRJ4hs1y81zlzuOW2X_ak7ZQRMLxi
+## 功能
 
-## Run Locally
+- 成语接龙
+<img src="imgs/1.png" width="300" height="500" alt="" />
+- 字典
+<img src="imgs/2.png" width="300" height="500" alt="" />
+- 词语查询
+<img src="imgs/3.png" width="300" height="500" alt="" />
+- 歇后语
+<img src="imgs/4.png" width="300" height="500" alt="" />
+- 成语查询
+<img src="imgs/5.png" width="300" height="500" alt="" />
 
-**Prerequisites:**  Node.js
+## 关于
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+<img src="imgs/6.png" width="300" height="500" alt="" />
