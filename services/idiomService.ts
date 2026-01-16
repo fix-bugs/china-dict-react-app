@@ -1,12 +1,13 @@
 
 import { Idiom, JielongResponse } from "../types";
+
 // import { cacheService } from "./cacheService";
 
 // const DB_URL = "https://raw.githubusercontent.com/by-syk/chinese-idiom-db/master/chinese-idioms-12976.db";
 // const WASM_URL = "./sql-wasm.wasm";
 
-const  dbFileUrl = "../data/chinese-idioms-12976.db";
-const  sqlWasmUrl = "../data/sql-wasm.wasm";
+const  dbFileUrl = "/data/chinese-idioms-12976.db";
+const  sqlWasmUrl = "/data/sql-wasm.wasm";
 
 let db: any = null;
 
